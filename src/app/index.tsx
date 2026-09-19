@@ -1,98 +1,96 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Cell } from "@/components/Cell";
+import { Status } from "@/components/Status";
+import { TitleGame } from "@/components/TitleGame";
+import type { BoardState, Player } from "@/types";
+import { checkWinner } from "@/utils/";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+export default function Index() {
+  const [cells, setCells] = useState<BoardState>(Array(9).fill(null));
+  const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const winnerResult = checkWinner(cells);
+  const winner = winnerResult ? winnerResult.winner : null;
+  const winnerCombination = winnerResult ? winnerResult.combination : [];
+  const isDraw = !winner && cells.every((cell) => cell != null);
+
+  const handleCellClick = (index: number): void => {
+    if (cells[index] || winner || isDraw) {
+      return;
+    }
+
+    const newCells = [...cells];
+    newCells[index] = currentPlayer;
+    setCells(newCells);
+    setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
+  };
+
+  const handleReset = () => {
+    setCells(Array(9).fill(null));
+    if (winner) {
+      setCurrentPlayer(winner === "X" ? "O" : "X");
+    }
+  };
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    
+      <View style={styles.game}>
+        <TitleGame title="Гра хрестики нулики" />
+        <Status player={currentPlayer} winner={winner} isDraw={isDraw} />
+        <View style={styles.board}>
+          {cells.map((cell, index) => (
+            <Cell
+              value={cell}
+              key={index}
+              onCellClick={() => handleCellClick(index)}
+              isWinner={winnerCombination.includes(index)}
+            />
+          ))}
+        </View>
+        <TouchableOpacity
+          style={styles.resetButton}
+          onPress={handleReset}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.resetText}>Скинути гру</Text>
+        </TouchableOpacity>
+      </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  game: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  board: {
+    width: 290,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 10,
+    marginVertical: 10,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  resetButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: "#007bff",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  resetText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
