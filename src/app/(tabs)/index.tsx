@@ -6,15 +6,28 @@ import { Status } from "@/components/Status";
 import { TitleGame } from "@/components/TitleGame";
 import type { BoardState, Player } from "@/types";
 import { checkWinner } from "@/utils/";
-import { useGame } from "@/context/GameContext";
 import { gameStyles as styles } from "@/styles/gameStyles";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function GameScreen() {
   const [cells, setCells] = useState<BoardState>(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
 
   // Отримуємо функцію фіксації результату з контексту
-  const { recordGameResult } = useGame();
+
+
+  const stats = useQuery(api.stats.getStats)
+
+  const recordGameResult = useMutation(api.stats.recordGameResult)
+
+  recordGameResult({result: "X"})
+
+  const resetStats = useMutation(api.stats.resetStats)
+
+  resetStats()
+
+
 
   // Прапорець, щоб зараховувати результат гри лише 1 раз за партію
   const gameRecordedRef = useRef(false);
