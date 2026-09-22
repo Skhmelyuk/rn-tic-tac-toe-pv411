@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Cell } from "@/components/Cell";
 import { Status } from "@/components/Status";
@@ -7,6 +7,7 @@ import { TitleGame } from "@/components/TitleGame";
 import type { BoardState, Player } from "@/types";
 import { checkWinner } from "@/utils/";
 import { useGame } from "@/context/GameContext";
+import { gameStyles as styles } from "@/styles/gameStyles";
 
 export default function GameScreen() {
   const [cells, setCells] = useState<BoardState>(Array(9).fill(null));
@@ -81,42 +82,3 @@ export default function GameScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f2f5",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  game: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  board: {
-    width: 290,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: 10,
-    marginVertical: 10,
-  },
-  resetButton: {
-    marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: "#007bff",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  resetText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-});
