@@ -6,15 +6,21 @@ import { Status } from "@/components/Status";
 import { TitleGame } from "@/components/TitleGame";
 import type { BoardState, Player } from "@/types";
 import { checkWinner } from "@/utils/";
-import { gameStyles as styles } from "@/styles/gameStyles";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation} from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { createStyles } from "@/styles/gameStyles";
+import {useTheme} from "@/context/ThemeContext";
 
 export default function GameScreen() {
+
+  const {colors} = useTheme()
+  const styles = createStyles(colors)
+  
   const [cells, setCells] = useState<BoardState>(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
 
-  const recordGameResult = useMutation(api.stats.recordGameResult)
+  const recordGameResult = useMutation(api.stats.recordGameResult);
+  const recordHistory = useMutation(api.gameHistory.recordHistory);
 
   // Прапорець, щоб зараховувати результат гри лише 1 раз за партію
   const gameRecordedRef = useRef(false);
@@ -28,12 +34,14 @@ export default function GameScreen() {
   useEffect(() => {
     if (winner && !gameRecordedRef.current) {
       recordGameResult({ result: winner });
+      recordHistory({ winner, board:cells, winnerCombination });
       gameRecordedRef.current = true;
     } else if (isDraw && !gameRecordedRef.current) {
       recordGameResult({ result: "DRAW" });
+      recordHistory({ winner: "DRAW", board:cells, winnerCombination });
       gameRecordedRef.current = true;
     }
-  }, [winner, isDraw]);
+  }, [winner, isDraw, cells, winnerCombination, recordGameResult, recordHistory]);
 
   const handleCellClick = (index: number): void => {
     if (cells[index] || winner || isDraw) {

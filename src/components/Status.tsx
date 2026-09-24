@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { CellValue, Player } from "@/types";
+import {useTheme, type ThemeColors} from "@/context/ThemeContext";
 
 interface StatusProps {
   player: Player;
@@ -8,6 +9,10 @@ interface StatusProps {
 }
 
 export function Status({ player, winner, isDraw }: StatusProps) {
+
+  const {colors} = useTheme()
+  const styles = createStyles(colors)
+  
   if (winner) {
     return (
       <View style={styles.turn}>
@@ -42,14 +47,14 @@ export function Status({ player, winner, isDraw }: StatusProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   turn: {
     marginBottom: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    backgroundColor: colors.surface,
     borderRadius: 30,
-    shadowColor: "#000",
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 15,
@@ -58,15 +63,15 @@ const styles = StyleSheet.create({
   },
   turnText: {
     fontSize: 18,
-    color: "#34495e",
+    color: colors.text,
     fontWeight: "500",
   },
   xMark: {
-    color: "#e74c3c",
+    color: colors.xMark,
     fontWeight: "bold",
   },
   oMark: {
-    color: "#007bff",
+    color: colors.oMark,
     fontWeight: "bold",
   },
 });

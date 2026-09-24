@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import type { ThemeColors } from "@/context/ThemeContext";
 
-export const gameStyles = StyleSheet.create({
+export const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f2f5",
+    backgroundColor: colors.bg,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -6,14 +6,18 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { statisticsStyles as styles } from "@/styles/statisticsStyles";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useTheme } from "@/context/ThemeContext";
+import { Switch } from "react-native";
+import { createStyles } from "@/styles/statisticsStyles";
 
 export default function StatisticsScreen() {
 
-  const stats = useQuery(api.stats.getStats);
+  const { isDarkMode, colors, toggleTheme } = useTheme()
+  const styles = createStyles(colors);
 
+  const stats = useQuery(api.stats.getStats);
   const resetStats = useMutation(api.stats.resetStats);
 
   const handleConfirmReset = () => {
@@ -31,6 +35,27 @@ export default function StatisticsScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Статистика ігор</Text>
+
+        {/* Блок перемикання теми */}
+        <View style={styles.themeCard}>
+          <View style={styles.themeInfo}>
+            <MaterialIcons
+              name={isDarkMode ? "dark-mode" : "light-mode"}
+              size={24}
+              color={isDarkMode ? "#FBBF24" : "#F59E0B"}
+            />
+            <Text style={styles.themeText}>
+              {isDarkMode ? "Темна тема" : "Світла тема"}
+            </Text>
+          </View>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleTheme}
+            trackColor={{ false: "#D1D5DB", true: colors.primary }}
+            thumbColor="#FFFFFF"
+          />
+        </View>
+
 
         <View style={styles.grid}>
           {/* Картка 1: Загальна кількість зіграних партій */}

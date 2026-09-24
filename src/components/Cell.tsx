@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 import type { CellValue } from "@/types";
+import {ThemeColors, useTheme} from "@/context/ThemeContext";
 
 interface CellProps {
   value: CellValue;
@@ -8,6 +9,10 @@ interface CellProps {
 }
 
 export function Cell({ value, onCellClick, isWinner }: CellProps) {
+
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
+
   return (
     <Pressable
       onPress={onCellClick}
@@ -31,23 +36,23 @@ export function Cell({ value, onCellClick, isWinner }: CellProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   cell: {
     width: 90,
     height: 90,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.surface,
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   winner: {
-    backgroundColor: "#2ecc71",
-    borderColor: "#27ae60",
+    backgroundColor: colors.winnerBg,
+    borderColor: colors.winnerBorder,
     borderWidth: 2,
   },
   pressed: {
@@ -59,12 +64,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   xMark: {
-    color: "#e74c3c",
+    color: colors.xMark,
   },
   oMark: {
-    color: "#3498db",
+    color: colors.oMark,
   },
   winnerText: {
-    color: "#ffffff",
+    color: colors.text,
   },
 });

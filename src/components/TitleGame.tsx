@@ -1,11 +1,17 @@
 import { StyleSheet, Text, View } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { ThemeColors, useTheme } from "@/context/ThemeContext"
 
 interface TitleGameProps {
   title: string;
 }
 
 export function TitleGame({ title }: TitleGameProps) {
+
+
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
   <View>
     <Text style={styles.title}>{title}</Text> 
@@ -22,9 +28,9 @@ export function TitleGame({ title }: TitleGameProps) {
   )
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   title: {
-    color: "#2c3e50",
+    color: colors.text,
     marginBottom: 20,
     fontSize: 24,
     fontWeight: "bold",
