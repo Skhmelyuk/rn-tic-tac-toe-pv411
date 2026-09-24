@@ -8,7 +8,6 @@ export const getStats = query({
 
     const statsDoc = await ctx.db.query("stats").first()
 
-
     if (!statsDoc) {
       return  {
         totalGames: 0,

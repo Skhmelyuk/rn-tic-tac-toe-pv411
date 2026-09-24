@@ -14,20 +14,7 @@ export default function GameScreen() {
   const [cells, setCells] = useState<BoardState>(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState<Player>("X");
 
-  // Отримуємо функцію фіксації результату з контексту
-
-
-  const stats = useQuery(api.stats.getStats)
-
   const recordGameResult = useMutation(api.stats.recordGameResult)
-
-  recordGameResult({result: "X"})
-
-  const resetStats = useMutation(api.stats.resetStats)
-
-  resetStats()
-
-
 
   // Прапорець, щоб зараховувати результат гри лише 1 раз за партію
   const gameRecordedRef = useRef(false);
@@ -40,10 +27,10 @@ export default function GameScreen() {
   // Автоматичний запис результату при завершенні партії
   useEffect(() => {
     if (winner && !gameRecordedRef.current) {
-      recordGameResult(winner);
+      recordGameResult({ result: winner });
       gameRecordedRef.current = true;
     } else if (isDraw && !gameRecordedRef.current) {
-      recordGameResult("DRAW");
+      recordGameResult({ result: "DRAW" });
       gameRecordedRef.current = true;
     }
   }, [winner, isDraw]);
